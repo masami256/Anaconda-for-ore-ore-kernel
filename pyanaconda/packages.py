@@ -355,3 +355,25 @@ def doReIPL(anaconda):
     anaconda.reIPLMessage = iutil.reIPL(anaconda, os.getppid())
 
     return DISPATCH_FORWARD
+
+def installTinyCoreNagScreen(anaconda):
+    if anaconda.dir == DISPATCH_BACK:
+	return DISPATCH_NOOP
+
+    while 1:
+	rc = anaconda.intf.messageWindow(_("Warning"),
+				 _("This is a Tiny Core Linux installer.\n"),
+				   type="custom", custom_icon="warning",
+				   custom_buttons=[_("_Exit"), _("_Install Anyway")])
+
+	if not rc:
+            msg =  _("Your system will now be rebooted...")
+            buttons = [_("_Back"), _("_Reboot")]
+	    rc = anaconda.intf.messageWindow( _("Warning! This is pre-release software!"),
+                                     msg,
+                                     type="custom", custom_icon="warning",
+                                     custom_buttons=buttons)
+	    if rc:
+		sys.exit(0)
+	else:
+	    break

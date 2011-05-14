@@ -33,7 +33,7 @@ import glob
 import tempfile
 import itertools
 import re
-
+import gzip
 
 import anaconda_log
 import rpm
@@ -1939,6 +1939,28 @@ reposdir=/etc/anaconda.repos.d,/tmp/updates/anaconda.repos.d,/tmp/product/anacon
         self.ayum.close()
         self.ayum.closeRpmDB()
         iutil.resetRpmDb(anaconda.rootPath)
+
+    def doInstallTinyCore(self, anaconda):
+        gzipImage = "/tmp/updates/tinycore.gz"
+        if os.path.exists(gzipImage) == False:
+            rc = anaconda.intf.detailedMessageWindow(_("Warning"),
+                                                     _("Cannot find tinycore.gz"),
+                                                     type="yesno", custom_icon="error",
+                                                     custom_buttons=[_("_Exit installer"), _("_Back"),
+                                                                     _("_Continue")])
+            sys.exit(1)
+
+        
+        f = gzip.open(gzipImage, 'rb')
+        data = f.read()
+        cpioFile = "/tmp/tinycore.cpio"
+        w = open(cpioFile,'wb')
+        w.write(data)
+        w.close()
+        f.close()
+
+        cmd = "cd %(rootPath)s && cpio -id < %(cpiofile)s" %{'rootPath' : anaconda.rootPath, 'cpiofile' : cpioFile}
+        os.system(cmd)
 
 class DownloadHeaderProgress:
     def __init__(self, intf, ayum=None):

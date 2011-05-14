@@ -186,17 +186,19 @@ def writeBootloader(anaconda):
 
     plainLabelUsed = 0
     defkern = "kernel"
-    for (version, arch, nick) in \
-            anaconda.backend.kernelVersionList(anaconda.rootPath):
-	if plainLabelUsed:
-            kernelList.append(("%s-%s" %(kernelLabel, nick),
-                               "%s-%s" %(kernelLongLabel, nick),
-                               version))
-	else:
-	    kernelList.append((kernelLabel, kernelLongLabel, version))
-            if nick != "base":
-                defkern = "kernel-%s" %(nick,)
-	    plainLabelUsed = 1
+#
+#    for (version, arch, nick) in \
+#            anaconda.backend.kernelVersionList(anaconda.rootPath):
+#	if plainLabelUsed:
+#            kernelList.append(("%s-%s" %(kernelLabel, nick),
+#                               "%s-%s" %(kernelLongLabel, nick),
+#                               version))
+#	else:
+#	    kernelList.append((kernelLabel, kernelLongLabel, version))
+#           if nick != "base":
+#                defkern = "kernel-%s" %(nick,)
+#	    plainLabelUsed = 1
+    kernelList.append(('miko', 'miko', '0'))
 
     f = open(anaconda.rootPath + "/etc/sysconfig/kernel", "w+")
     f.write("# UPDATEDEFAULT specifies if new-kernel-pkg should make\n"
@@ -243,3 +245,49 @@ def hasWindows(bl):
             break
 
     return foundWindows
+
+def installGrubForTinyCore(anaconda):
+    source = '/tmp/updates'
+    retfile = '/tmp/grubrpm.log'
+    tmplog = open('/tmp/tiny.log', "w")
+
+    os_arch = os.uname()[4]
+    cmd = "ls %(source)s | grep grub | grep %(machine)s > %(retfile)s" %{'source':source, 'machine':os_arch, 'retfile':retfile}
+    tmplog.writelines(cmd)
+    os.system(cmd)
+
+    f = open(retfile, "r")
+    grubrpm = f.read()
+    f.close()
+
+    tmpPath = '/mnt/sysimage'
+    cmd = "rpm -Uvh --nodeps --root %(tmpPath)s %(source)s/%(grubrpm)s > /tmp/inst.log" %{'tmpPath':tmpPath, 'source':source, 'grubrpm':grubrpm}
+    tmplog.writelines(cmd)
+    os.system(cmd)
+
+    disks = "storage.disks: %s" % [d.name for d in anaconda.storage.disks]
+    tmplog.writelines(disks)
+
+    disk = anaconda.storage.disks[0].name
+
+    cmd = "grub-install --root-directory=%(tmpPath)s %(disk)s" %{'tmpPath':tmpPath, 'disk':disk}
+    tmplog.writelines(cmd)
+    os.system(cmd)
+
+    cmd = "/tmp/grubtmp/sbin/grub --batch --device-map=/dev/null << EOF\ndevice (hd0)\t%(disk)s1\nroot (hd0)\nsetup (hd0)\nquit\nEOF" %{'disk':disk}
+    tmplog.writelines(cmd)
+    os.system(cmd)
+
+    # install kernel
+    # anaconda uses vmlinuz as kernel image name.
+    cmd = "cp /tmp/updates/kernel.img %(rootPath)s/boot/vmlinuz-0" %{'rootPath' : anaconda.rootPath}
+    os.system(cmd)
+    tmplog.writelines(cmd)
+
+    tmplog.close()
+
+    
+def writeBootloaderTinyCore(anaconda):
+    installGrubForTinyCore(anaconda)
+    writeBootloader(anaconda)
+

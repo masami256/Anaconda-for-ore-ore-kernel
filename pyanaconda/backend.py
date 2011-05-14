@@ -104,6 +104,10 @@ class AnacondaBackend:
         log.warning("doInstall not implemented for backend!")
         raise NotImplementedError
 
+    def doInstallTinyCore(self, anaconda):
+        log.warning("doInstallTinyCore not implemented for backend!")
+        raise NotImplementedError
+
     def initLog(self, instPath):
         if not os.path.isdir(instPath + "/root"):
             iutil.mkdirChain(instPath + "/root")
@@ -206,6 +210,9 @@ def doPostInstall(anaconda):
 
 def doInstall(anaconda):
     return anaconda.backend.doInstall(anaconda)
+
+def doInstallTinyCore(anaconda):
+    return anaconda.backend.doInstallTinyCore(anaconda)
 
 # does this need to be per-backend?  we'll just leave here until it does :)
 def doBasePackageSelect(anaconda):

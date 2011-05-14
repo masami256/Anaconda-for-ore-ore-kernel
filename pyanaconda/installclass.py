@@ -84,13 +84,14 @@ class BaseInstallClass(object):
     def setSteps(self, anaconda):
         dispatch = anaconda.dispatch
 	dispatch.setStepList(
+                 "kernelvm_top",
+                 "installTinyCoreNag",
 		 "language",
 		 "keyboard",
                  "filtertype",
                  "filter",
                  "storageinit",
                  "findrootparts",
-		 "betanag",
                  "cleardiskssel",
                  "parttype",
                  "autopartitionexecute",

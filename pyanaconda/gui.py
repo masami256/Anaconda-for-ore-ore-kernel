@@ -64,6 +64,7 @@ class StayOnScreen(Exception):
 mainWindow = None
 
 stepToClass = {
+    "kernelvm_top" : ("kernelvm_top_gui", "KernelvmTopWindow"),
     "language" : ("language_gui", "LanguageWindow"),
     "keyboard" : ("kbd_gui", "KeyboardWindow"),
     "filtertype" : ("filter_type", "FilterTypeWindow"),

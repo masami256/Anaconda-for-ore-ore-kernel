@@ -28,6 +28,7 @@ from packages import doPostAction
 from packages import copyAnacondaLogs
 from packages import firstbootConfiguration
 from packages import betaNagScreen
+from packages import installTinyCoreNagScreen
 from packages import setupTimezone
 from packages import setFileCons
 from storage import storageInitialize
@@ -45,6 +46,9 @@ from kickstart import runPostScripts
 from backend import doPostSelection, doBackendSetup, doBasePackageSelect
 from backend import doPreInstall, doPostInstall, doInstall
 from backend import writeConfiguration
+
+from backend import doInstallTinyCore
+from bootloader import writeBootloaderTinyCore
 
 from packages import doReIPL
 
@@ -66,53 +70,31 @@ log = logging.getLogger("anaconda")
 # All install steps take the anaconda object as their sole argument.  This
 # gets passed in when we call the function.
 installSteps = [
+    ("kernelvm_top", ),
+    ("installTinyCoreNag", installTinyCoreNagScreen, ),
     ("language", ),
     ("keyboard", ),
-    ("betanag", betaNagScreen, ),
     ("filtertype", ),
     ("filter", ),
     ("storageinit", storageInitialize, ),
     ("findrootparts", findRootParts, ),
     ("findinstall", ),
-    ("network", ),
-    ("timezone", ),
-    ("accounts", ),
-    ("setuptime", setupTimezone, ),
     ("parttype", ),
     ("cleardiskssel", ),
     ("autopartitionexecute", doAutoPartition, ),
     ("partition", ),
-    ("upgrademount", upgradeMountFilesystems, ),
-    ("restoretime", restoreTime, ),
-    ("upgradecontinue", queryUpgradeContinue, ),
-    ("upgradeswapsuggestion", upgradeSwapSuggestion, ),
     ("addswap", ),
-    ("upgrademigfind", upgradeMigrateFind, ),
-    ("upgrademigratefs", ),
     ("storagedone", storageComplete, ),
     ("enablefilesystems", turnOnFilesystems, ),
-    ("upgbootloader", ),
     ("bootloadersetup", bootloaderSetupChoices, ),
     ("bootloader", ),
-    ("reposetup", doBackendSetup, ),
-    ("tasksel", ),
-    ("basepkgsel", doBasePackageSelect, ),
-    ("group-selection", ),
-    ("postselection", doPostSelection, ),
     ("install", ),
-    ("preinstallconfig", doPreInstall, ),
-    ("installpackages", doInstall, ),
-    ("postinstallconfig", doPostInstall, ),
-    ("writeconfig", writeConfiguration, ),
-    ("firstboot", firstbootConfiguration, ),
-    ("instbootloader", writeBootloader, ),
+    ("installpackages", doInstallTinyCore),
+    ("instbootloader", writeBootloaderTinyCore, ),
     ("reipl", doReIPL, ),
-    ("writeksconfig", writeKSConfiguration, ),
-    ("setfilecon", setFileCons, ),
-    ("copylogs", copyAnacondaLogs, ),
     ("methodcomplete", doMethodComplete, ),
-    ("postscripts", runPostScripts, ),
-    ("dopostaction", doPostAction, ),
+#    ("postscripts", runPostScripts, ),
+#    ("dopostaction", doPostAction, ),
     ("complete", ),
     ]
 
