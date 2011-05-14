@@ -1,0 +1,10 @@
+modlist
+moddeps
+genhdlist
+mapshdr
+snarffont
+readmap
+.utils
+.depend
+moduledeps.c
+moduleinfo.c
