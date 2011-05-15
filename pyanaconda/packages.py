@@ -362,7 +362,7 @@ def installTinyCoreNagScreen(anaconda):
 
     while 1:
 	rc = anaconda.intf.messageWindow(_("Warning"),
-				 _("This is a Tiny Core Linux installer.\n"),
+				 _("This is an Ore ore kernel installer.\n"),
 				   type="custom", custom_icon="warning",
 				   custom_buttons=[_("_Exit"), _("_Install Anyway")])
 
