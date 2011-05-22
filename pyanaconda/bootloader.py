@@ -274,7 +274,7 @@ def installGrubForTinyCore(anaconda):
     tmplog.writelines(cmd)
     os.system(cmd)
 
-    cmd = "/tmp/grubtmp/sbin/grub --batch --device-map=/dev/null << EOF\ndevice (hd0)\t%(disk)s1\nroot (hd0)\nsetup (hd0)\nquit\nEOF" %{'disk':disk}
+    cmd = "grub --batch --device-map=/dev/null << EOF\ndevice (hd0)\t%(disk)s1\nroot (hd0)\nsetup (hd0)\nquit\nEOF" %{'disk':disk}
     tmplog.writelines(cmd)
     os.system(cmd)
 
